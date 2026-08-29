@@ -1,0 +1,11 @@
+---
+- name: prometheus
+  hosts: all
+  become: true
+  vars_prompt:
+  - name: node_exporter_version
+    prompt: Enter node exporter version
+
+  roles:
+    - node_exporter
+

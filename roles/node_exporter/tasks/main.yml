@@ -1,0 +1,42 @@
+---
+- name: Debug
+  ansible.builtin.debug:
+    var: node_exporter_port
+
+- name: Prepair block
+  delegate_to: 127.0.0.1
+  run_once: true
+  block: 
+    - name: Get list-releases
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/prometheus/node_exporter/releases
+      register: git_answer
+
+    - name: Debug git_answer
+      ansible.builtin.set_fact:
+        list_version: "{{ git_answer.json | map(attribute='tag_name') }}"
+      
+    - name: Assert
+      ansible.builtin.assert: 
+        that: node_exporter_version in list_version
+        fail_msg:  "incorrect version,choose from list: {{ list_version|join(', ') }}"
+  
+
+- name: Download from link
+  ansible.builtin.unarchive:
+    src: "{{ node_exporter_release_path }}"
+    dest: /usr/local/bin
+    remote_src: yes
+    include:
+      - "node_exporter-{{ node_exporter_relative_path }}/node_exporter"
+    extra_opts:
+      - "--strip-component=1"
+
+
+
+# - name: Create systemd-service node_exporter
+#   template:
+#     src: node_exporter.service.j2
+#     dest: "{{ node_exporter_unit_path }}"
+#     mode: 0644
+#   register: node_exporter_service

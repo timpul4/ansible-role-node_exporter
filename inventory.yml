@@ -1,0 +1,15 @@
+---
+all:
+  children:
+    test-servers:
+      vars:
+        ansible_user: ubuntu
+      hosts: 
+        # test1:
+        #   ansible_host: 98.94.67.242
+        # test2:
+        #   ansible_host: 44.192.99.57
+        test3:
+          ansible_host: 3.90.69.46
+
+
