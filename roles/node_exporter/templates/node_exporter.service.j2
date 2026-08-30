@@ -1,11 +1,13 @@
 [Unit]
 Description=NodeExporter
 After=network-online.target
+Documentation:https://prometheus.io/docs/guides/node-exporter/
 
 [Service]
 User=node_exporter
 Group=node_exporter
-ExecStart=/usr/local/bin/node_exporter --web.listen-address=:{{}}
+Type=simple
+ExecStart=/usr/local/bin/node_exporter --web.listen-address=:{{ node_exporter_port }}
 
 [Install]
-Wantedby=multi-user-target
+Wantedby=multi-user-targetType=simple

@@ -1,8 +1,4 @@
 ---
-- name: Debug
-  ansible.builtin.debug:
-    var: node_exporter_port
-
 - name: Prepair block
   delegate_to: 127.0.0.1
   run_once: true
@@ -19,10 +15,26 @@
     - name: Assert
       ansible.builtin.assert: 
         that: node_exporter_version in list_version
-        fail_msg:  "incorrect version,choose from list: {{ list_version|join(', ') }}"
-  
+        fail_msg: "incorrect version,choose from list: {{ list_version|join(', ') }}"
 
+
+- name: Create node_exporter group
+  become: true
+  ansible.builtin.group:
+    name: "{{ node_exporter_group }}"
+    system: true
+    state: present
+
+- name: Create node_exporter user
+  become: true
+  ansible.builtin.user:
+    name: "{{ node_exporter_user }}"
+    group: "{{ node_exporter_group }}"
+    system: true
+    shell: /usr/sbin/nologin
+  
 - name: Download from link
+  become: true
   ansible.builtin.unarchive:
     src: "{{ node_exporter_release_path }}"
     dest: /usr/local/bin
@@ -34,9 +46,10 @@
 
 
 
-# - name: Create systemd-service node_exporter
-#   template:
-#     src: node_exporter.service.j2
-#     dest: "{{ node_exporter_unit_path }}"
-#     mode: 0644
-#   register: node_exporter_service
+- name: Create systemd-service node_exporter
+  become: true
+  template:
+    src: node_exporter.service.j2
+    dest: "{{ node_exporter_unit_path }}"
+    mode: 0644
+  register: node_exporter_service
