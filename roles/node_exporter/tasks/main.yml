@@ -1,7 +1,4 @@
 ---
-- name: Debug
-  ansible.builtin.debug:
-    var: node_exporter_port
 
 - name: Prepair block
   delegate_to: 127.0.0.1
