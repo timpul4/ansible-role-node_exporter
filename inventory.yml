@@ -10,6 +10,6 @@ all:
         # test2:
         #   ansible_host: 44.192.99.57
         test3:
-          ansible_host: 3.90.69.46
+          ansible_host: 34.229.0.10
 
 
