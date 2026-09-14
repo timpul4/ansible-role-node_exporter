@@ -139,6 +139,3 @@ Ways to help:
 * Bug reports and feature requests
 * Pull requests with improvements
 * Additional tests
-* Support for new Node Exporter versions or architectures
-* Improvements to the systemd configuration
-* Documentation improvements
