@@ -18,6 +18,17 @@ Include the role in your Ansible playbook and apply it to the hosts where Node E
     - role: node_exporter
 ```
 
+## Example inventory file
+```
+---
+all:
+  children:
+    test-servers:
+      vars:
+        ansible_user: "{{ ansible_user }}"
+      hosts: 
+```
+
 The role requires elevated privileges to install the Node Exporter binary, create the systemd unit, and configure the required directories and files.
 
 If the Ansible user does not have `NOPASSWD` sudo access and is not the `root` user, you need to provide the become password when running the playbook.
