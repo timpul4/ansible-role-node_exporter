@@ -1,38 +1,141 @@
-Role Name
-=========
+# Node Exporter Ansible Role
 
-A brief description of the role goes here.
+This Ansible role is designed to automate the deployment and configuration of [Prometheus Node Exporter](https://github.com/prometheus/node_exporter).
 
-Requirements
-------------
+The role installs Node Exporter from a binary release, configures it as a systemd service, and allows managing the service lifecycle through Ansible.
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+## Using the role
 
-Role Variables
---------------
+Include the role in your Ansible playbook and apply it to the hosts where Node Exporter should be installed.
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+## Example playbook
 
-Dependencies
-------------
+```yaml
+- hosts: node_exporter_hosts
+  become: true
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+  roles:
+    - role: node_exporter
+```
 
-Example Playbook
-----------------
+The role requires elevated privileges to install the Node Exporter binary, create the systemd unit, and configure the required directories and files.
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+If the Ansible user does not have `NOPASSWD` sudo access and is not the `root` user, you need to provide the become password when running the playbook.
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+For example:
 
-License
--------
+```bash
+ansible-playbook -i inventory.yml playbook.yml --ask-become-pass
+```
 
-BSD
+## What the role does
 
-Author Information
-------------------
+The role automates the following tasks:
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+* Downloads the Node Exporter binary from the specified release.
+* Installs Node Exporter on the target host.
+* Creates the required system user.
+* Creates the required directories.
+* Configures Node Exporter as a systemd service.
+* Configures the Node Exporter listening port.
+* Enables Node Exporter to start automatically after system boot.
+* Starts and restarts the Node Exporter service when required.
+* Verifies that Node Exporter is running and available.
+
+Node Exporter exposes host-level hardware and operating system metrics through an HTTP endpoint that can be scraped by Prometheus.
+
+By default, the metrics endpoint is available at:
+
+```text
+http://<host>:<port>/metrics
+```
+
+## Node Exporter service
+
+After installation, Node Exporter is managed through systemd.
+
+The service can be checked with:
+
+```bash
+systemctl status node_exporter
+```
+
+Started manually with:
+
+```bash
+systemctl start node_exporter
+```
+
+Restarted with:
+
+```bash
+systemctl restart node_exporter
+```
+
+And enabled at boot with:
+
+```bash
+systemctl enable node_exporter
+```
+
+The exported metrics can be checked with:
+
+```bash
+curl http://localhost:<port>/metrics
+```
+
+## Prometheus integration
+
+After Node Exporter has been installed, Prometheus can scrape its `/metrics` endpoint.
+
+Example Prometheus configuration:
+
+```yaml
+scrape_configs:
+  - job_name: node_exporter
+    static_configs:
+      - targets:
+          - server01:9100
+          - server02:9100
+```
+
+The exact port depends on the configuration used for the role.
+
+## Requirements
+
+* Ansible
+* Linux target host
+* systemd
+* x86_64 or another supported architecture
+* Internet access from the target host if the Node Exporter binary is downloaded directly
+* Privileged access (`root` or `sudo`)
+
+## Role structure
+
+The role follows the standard Ansible role structure:
+
+```text
+node_exporter/
+├── defaults/
+│   └── main.yml
+├── handlers/
+│   └── main.yml
+├── tasks/
+│   └── main.yml
+├── templates/
+│   └── node_exporter.service.j2
+├── files/
+├── meta/
+│   └── main.yml
+└── README.md
+```
+
+## Contributing
+
+Contributions are highly welcome.
+
+Ways to help:
+
+* Bug reports and feature requests
+* Pull requests with improvements
+* Additional tests
