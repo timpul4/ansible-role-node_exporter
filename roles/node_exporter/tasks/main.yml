@@ -44,8 +44,6 @@
     extra_opts:
       - "--strip-component=1"
 
-
-
 - name: Create systemd-service node_exporter
   become: true
   template:
