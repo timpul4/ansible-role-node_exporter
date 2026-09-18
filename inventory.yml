@@ -1,9 +1,0 @@
----
-all:
-  children:
-    test-servers:
-      vars:
-        ansible_user: "{{ ansible_user }}"
-      hosts: 
-
-
