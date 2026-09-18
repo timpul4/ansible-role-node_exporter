@@ -11,9 +11,13 @@ Include the role in your Ansible playbook and apply it to the hosts where Node E
 ## Example playbook
 
 ```yaml
-- hosts: node_exporter_hosts
-  become: true
-
+---
+- name: prometheus
+  hosts: all
+  vars_prompt:
+  - name: node_exporter_version
+    prompt: Enter node exporter version
+    
   roles:
     - role: node_exporter
 ```
