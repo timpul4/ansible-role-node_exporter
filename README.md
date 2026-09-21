@@ -37,15 +37,13 @@ ansible-playbook -i inventory.yml playbook.yml --ask-become-pass
 
 The role automates the following tasks:
 
+* Interactive Node Exporter Version Selection
 * Downloads the Node Exporter binary from the specified release.
 * Installs Node Exporter on the target host.
 * Creates the required system user.
-* Creates the required directories.
 * Configures Node Exporter as a systemd service.
 * Configures the Node Exporter listening port.
 * Enables Node Exporter to start automatically after system boot.
-* Starts and restarts the Node Exporter service when required.
-* Verifies that Node Exporter is running and available.
 
 Node Exporter exposes host-level hardware and operating system metrics through an HTTP endpoint that can be scraped by Prometheus.
 
