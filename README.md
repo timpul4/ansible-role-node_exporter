@@ -8,20 +8,31 @@ The role installs Node Exporter from a binary release, configures it as a system
 
 Include the role in your Ansible playbook and apply it to the hosts where Node Exporter should be installed.
 
+The Node Exporter version is selected **interactively when the playbook is started**. For example, you can enter `v1.10.1` or another available release version.
+
 ## Example playbook
 
 ```yaml
 ---
-- name: prometheus
+- name: <name>
   hosts: all
+  become: yes
+
   vars_prompt:
-  - name: node_exporter_version
-    prompt: Enter node exporter version
-    
+    - name: node_exporter_version
+      prompt: "Enter Node Exporter version"
+
   roles:
     - role: node_exporter
 ```
 
+When running the playbook, Ansible will prompt for the Node Exporter version:
+
+```text
+Enter Node Exporter version (e.g. v1.10.1): v1.10.1
+```
+
+The selected version is then used to download and install the corresponding Node Exporter binary.
 
 The role requires elevated privileges to install the Node Exporter binary, create the systemd unit, and configure the required directories and files.
 
@@ -37,8 +48,8 @@ ansible-playbook -i inventory.yml playbook.yml --ask-become-pass
 
 The role automates the following tasks:
 
-* Interactive Node Exporter Version Selection
-* Downloads the Node Exporter binary from the specified release.
+* **Interactive Node Exporter Version Selection** — prompts the user to enter the required version, for example `v1.10.1`.
+* Downloads the selected Node Exporter binary from the corresponding release.
 * Installs Node Exporter on the target host.
 * Creates the required system user.
 * Configures Node Exporter as a systemd service.
@@ -135,7 +146,7 @@ node_exporter/
 
 ## Contributing
 
-Contributions are highly welcome.
+Contribution are highly welcome.
 
 Ways to help:
 
